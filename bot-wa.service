@@ -1,0 +1,18 @@
+[Unit]
+Description=WhatsApp Bot Node.js Service
+After=network.target
+
+[Service]
+Type=simple
+User=YOUR_VM_USER
+WorkingDirectory=/home/YOUR_VM_USER/BotWA
+ExecStart=/usr/bin/node dist/index.js
+Restart=always
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=bot-wa
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target

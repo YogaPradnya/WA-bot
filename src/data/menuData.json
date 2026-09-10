@@ -1,0 +1,16 @@
+{
+  "items": [
+    {
+      "trigger": "roblox",
+      "title": "ROBUX",
+      "response": "✦ ROBUX VIA SEND / USERNAME ✦\n\n‼️Kelipatan 10 Robux‼️\n10R  — Rp 2.500\n20R  — Rp 4.000\n30R  — Rp 5.500\n40R  — Rp 7.000\n50R  — Rp 9.000\n60R  — Rp 10.500\n70R  — Rp 12.500\n80R  — Rp 14.000\n90R  — Rp 16.000\n\n‼️Kelipatan 100 Robux‼️\n100R   — Rp 18.000\n200R   — Rp 35.000\n300R   — Rp 53.000\n400R   — Rp 70.000\n500R   — Rp 87.000\n600R   — Rp 105.000\n700R   — Rp 125.000\n800R   — Rp 140.000\n900R   — Rp 160.000\n1000R  — Rp 175.000\ndst.\n\n\n> ୨୧ NOTES ୨୧\n\n> 🐾 Membutuhkan username & display name\n> 🐾 Robux clean & aman\n> 🐾 Akun wajib verifikasi 18+",
+      "imageUrl": "/media/1788857629581-2f700129e8b01fe32cf50da27671c20b_jpg.jpg"
+    },
+    {
+      "trigger": "pyment",
+      "title": "PEMBAYARAN",
+      "response": "✦ PEMBAYARAN✦\n\nJAGO:\nGOPAY: \nDANA:\nBCA:",
+      "imageUrl": "/media/1788914980740-qr-code-MGO29027E0F7E0FC405428295_png.png"
+    }
+  ]
+}

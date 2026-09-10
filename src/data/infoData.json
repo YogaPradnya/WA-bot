@@ -1,0 +1,20 @@
+{
+  "topics": {
+    "about": {
+      "title": "Tentang Bot",
+      "content": "Bot WhatsApp ini dibangun dengan Node.js, TypeScript, dan Baileys, dioptimalkan secara khusus untuk berjalan efisien di Google Cloud VM."
+    },
+    "kontak": {
+      "title": "Kontak Pengembang / Admin",
+      "content": "Untuk pertanyaan, kendala teknis, atau permintaan fitur, silakan hubungi admin pengelola sistem ini."
+    },
+    "panduan": {
+      "title": "Panduan Penggunaan",
+      "content": "Gunakan prefix ! di awal setiap perintah. Ketik !help untuk melihat seluruh daftar perintah yang tersedia."
+    },
+    "gcp": {
+      "title": "Informasi Hosting Google Cloud VM",
+      "content": "Bot berjalan pada Compute Engine VM di Google Cloud Platform. Anda dapat memantau status CPU, RAM, dan Uptime server menggunakan perintah !server."
+    }
+  }
+}

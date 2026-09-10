@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Dashboard manajemen Bot WhatsApp untuk memantau status, mengelola menu, upload banner, dan mengatur konfigurasi bot.">
+  <meta name="theme-color" content="#0b0d14">
+  <title>Bot WhatsApp — Dashboard</title>
+  <script>
+    (function () {
+      try {
+        var theme = localStorage.getItem('dashboard_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <!-- Login Modal -->
+  <div id="login-overlay" class="overlay active">
+    <div class="modal-card login-card">
+      <div class="login-header">
+        <div class="login-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+        </div>
+        <h1>WhatsApp Bot</h1>
+        <p class="login-subtitle">Dashboard Manajemen</p>
+      </div>
+      <form id="login-form">
+        <div class="form-group">
+          <label for="login-password">Password Admin</label>
+          <input type="password" id="login-password" placeholder="Masukkan password dashboard" autocomplete="current-password" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full" id="login-btn">Masuk</button>
+        <p id="login-error" class="error-text"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Main Dashboard -->
+  <div id="dashboard" class="dashboard hidden">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-inner">
+        <div class="header-left">
+          <h1 class="header-title">WA Bot Dashboard</h1>
+        </div>
+        <div class="header-right">
+          <div class="bot-toggle-wrapper">
+            <button class="btn-bot-toggle bot-on" id="bot-toggle-btn" title="Klik untuk mengaktifkan atau menonaktifkan respon bot">
+              <span class="indicator-dot" id="bot-toggle-dot"></span>
+              <span id="bot-toggle-text">Bot Aktif</span>
+            </button>
+          </div>
+          <span id="connection-badge" class="badge badge-offline">Offline</span>
+          <button class="btn btn-ghost btn-sm" id="theme-toggle-btn" title="Ganti Tema (Dark / Light)">
+            <svg id="theme-icon-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <svg id="theme-icon-sun" class="hidden" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          </button>
+          <button class="btn btn-ghost btn-sm" id="refresh-btn" title="Muat Ulang Data">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+          </button>
+          <button class="btn btn-ghost btn-sm" id="logout-btn" title="Keluar">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Layout with Sidebar -->
+    <div class="dashboard-layout">
+      <!-- Sidebar Backdrop for Mobile -->
+      <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <!-- Floating Edge Toggle Button (Outside right border) -->
+        <button class="sidebar-edge-toggle" id="sidebar-toggle-btn" title="Buka / Tutup Sidebar">
+          <svg class="edge-toggle-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div class="sidebar-brand">
+          <div class="sidebar-brand-icon" data-tooltip="Bot Manager">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+          </div>
+          <div class="sidebar-brand-info">
+            <div class="sidebar-brand-title">Bot Manager</div>
+            <div class="sidebar-brand-badge">Cloud Turso</div>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <!-- 1. Dashboard -->
+          <button class="nav-item active" data-view="dashboard" data-tooltip="Dashboard">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+            <span>Dashboard</span>
+          </button>
+
+          <!-- 2. Setup (Dropdown) -->
+          <div class="nav-dropdown" id="nav-setup-dropdown">
+            <button class="nav-item nav-dropdown-trigger" id="setup-dropdown-btn" data-tooltip="Setup">
+              <div class="nav-item-content">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span>Setup</span>
+              </div>
+              <svg class="chevron-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="nav-dropdown-menu" id="setup-dropdown-menu">
+              <button class="nav-sub-item" data-view="setup-menu">
+                <span class="sub-dot"></span>
+                <span>Setup Menu</span>
+              </button>
+              <button class="nav-sub-item" data-view="setup-config">
+                <span class="sub-dot"></span>
+                <span>Setup Bot</span>
+              </button>
+              <button class="nav-sub-item" data-view="setup-welcome">
+                <span class="sub-dot"></span>
+                <span>Setup Welcome</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 3. Log -->
+          <button class="nav-item" data-view="logs" data-tooltip="Log Aktivitas">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+            <span>Log Aktivitas</span>
+          </button>
+        </nav>
+      </aside>
+
+      <!-- Main Content Views -->
+      <main class="main-content">
+        <!-- 1. Dashboard View (Overview & Metrics) -->
+        <div class="view-panel" id="view-dashboard">
+          <section class="section">
+            <div class="section-header">
+              <h2 class="section-title">Status Sistem & Ringkasan Bot</h2>
+            </div>
+            <div class="cards-grid">
+              <div class="stat-card">
+                <div class="stat-label">Status Bot</div>
+                <div class="stat-value" id="stat-bot-status">-</div>
+                <div class="stat-sub" id="stat-bot-jid">-</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Pesan & Perintah (Turso)</div>
+                <div class="stat-value" id="stat-messages-count">0</div>
+                <div class="stat-sub" id="stat-commands-count">0 Perintah</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Total Menu</div>
+                <div class="stat-value" id="stat-menu-count">0</div>
+                <div class="stat-sub">Item Cloud Turso</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">RAM Terpakai</div>
+                <div class="stat-value" id="stat-ram">-</div>
+                <div class="stat-sub" id="stat-ram-detail">-</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Uptime Sistem</div>
+                <div class="stat-value" id="stat-uptime">-</div>
+                <div class="stat-sub" id="stat-node-version">-</div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- 2a. Setup Menu View -->
+        <div class="view-panel hidden" id="view-setup-menu">
+          <section class="section">
+            <div class="section-header">
+              <h2 class="section-title">Manajemen Menu (Turso DB)</h2>
+              <button class="btn btn-primary btn-sm" id="add-menu-btn">+ Tambah Menu</button>
+            </div>
+            <div class="table-container">
+              <table class="data-table" id="menu-table">
+                <thead>
+                  <tr>
+                    <th>Trigger</th>
+                    <th>Judul</th>
+                    <th>Respon</th>
+                    <th class="th-actions">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="menu-tbody">
+                  <tr><td colspan="4" class="empty-row">Memuat data menu...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+
+        <!-- 2b. Setup Bot (Config) View -->
+        <div class="view-panel hidden" id="view-setup-config">
+          <section class="section">
+            <div class="section-header">
+              <h2 class="section-title">Setup Konfigurasi Bot</h2>
+            </div>
+            <div class="config-grid">
+              <div class="config-card">
+                <h3>Prefix Perintah</h3>
+                <p class="config-desc">Karakter awalan untuk perintah bot (contoh: titik).</p>
+                <div class="config-inline">
+                  <input type="text" id="config-prefix" class="input-sm" maxlength="3" value=".">
+                  <button class="btn btn-primary btn-sm" id="save-prefix-btn">Simpan</button>
+                </div>
+              </div>
+              <div class="config-card">
+                <h3>Nomor / LID Admin</h3>
+                <p class="config-desc">Daftar ID yang diizinkan mengelola bot, pisahkan dengan koma.</p>
+                <textarea id="config-admins" class="textarea-sm" rows="3" placeholder="628xxx,628yyy"></textarea>
+                <button class="btn btn-primary btn-sm" id="save-admins-btn" style="margin-top: 0.5rem;">Simpan Admin</button>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- 2c. Setup Welcome View -->
+        <div class="view-panel hidden" id="view-setup-welcome">
+          <section class="section">
+            <div class="section-header">
+              <h2 class="section-title">Setup Welcome Message Grup</h2>
+            </div>
+            <div class="config-grid">
+              <div class="config-card">
+                <h3>Pesan Selamat Datang</h3>
+                <p class="config-desc">Pesan otomatis saat anggota baru masuk grup. Gunakan <code>@user</code> untuk mention.</p>
+                <label class="toggle-row">
+                  <input type="checkbox" id="config-welcome-enabled">
+                  <span>Aktifkan welcome message</span>
+                </label>
+                <textarea id="config-welcome-message" class="textarea-sm" rows="4" placeholder="Selamat datang @user!"></textarea>
+                <button class="btn btn-primary btn-sm" id="save-welcome-btn" style="margin-top: 0.5rem;">Simpan Welcome</button>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- 3. Live Logs View -->
+        <div class="view-panel hidden" id="view-logs">
+          <section class="section">
+            <div class="section-header">
+              <h2 class="section-title">Live Log Aktivitas Bot</h2>
+              <div class="section-actions">
+                <span class="live-indicator"><span class="pulse-dot"></span> Live</span>
+                <button class="btn btn-ghost btn-sm" id="refresh-logs-btn">Refresh Log</button>
+              </div>
+            </div>
+            <div class="logs-container">
+              <div class="logs-toolbar">
+                <span class="logs-count" id="logs-count">0 entri log</span>
+                <div class="logs-filter">
+                  <select id="logs-filter-category" class="select-sm">
+                    <option value="all">Semua Kategori</option>
+                    <option value="message">Pesan Masuk</option>
+                    <option value="command">Perintah</option>
+                    <option value="system">Sistem</option>
+                  </select>
+                </div>
+              </div>
+              <div class="logs-list" id="logs-list">
+                <div class="log-item empty-log">Memuat log aktivitas...</div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+  <!-- Menu Form Modal -->
+  <div id="menu-modal-overlay" class="overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="menu-modal-title">Tambah Menu Baru</h2>
+        <button class="btn-close" id="menu-modal-close">&times;</button>
+      </div>
+      <form id="menu-form">
+        <div class="form-group">
+          <label for="menu-trigger">Trigger (Angka / Kata Kunci)</label>
+          <input type="text" id="menu-trigger" placeholder="contoh: 4 atau roblox" required>
+        </div>
+        <div class="form-group">
+          <label for="menu-title">Judul Menu</label>
+          <input type="text" id="menu-title" placeholder="contoh: Top Up Roblox" required>
+        </div>
+        <div class="form-group">
+          <label for="menu-response">Konten Respon</label>
+          <textarea id="menu-response" rows="4" placeholder="Teks yang akan dikirim bot saat trigger dikirim oleh pengguna..." required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="menu-image-file">Banner / Foto Menu <span class="optional-label">(opsional)</span></label>
+          <input type="file" id="menu-image-file" accept="image/jpeg,image/png,image/webp">
+          <p class="form-hint">Pilih JPG, PNG, atau WEBP. Maksimal 8 MB.</p>
+          <input type="hidden" id="menu-image-url">
+          <div id="menu-image-preview" class="image-preview hidden">
+            <img id="menu-preview-img" alt="Preview banner menu">
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" id="menu-modal-cancel">Batal</button>
+          <button type="submit" class="btn btn-primary" id="menu-modal-submit">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Confirm Modal -->
+  <div id="delete-modal-overlay" class="overlay">
+    <div class="modal-card modal-sm">
+      <h2>Konfirmasi Hapus</h2>
+      <p>Apakah Anda yakin ingin menghapus menu dengan trigger <strong id="delete-trigger-name"></strong>?</p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="delete-cancel-btn">Batal</button>
+        <button class="btn btn-danger" id="delete-confirm-btn">Hapus</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast-container"></div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
